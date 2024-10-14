@@ -1,13 +1,17 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
+	_ "github.com/lib/pq"
 	"github.com/nudopnu/gator/internal/config"
+	"github.com/nudopnu/gator/internal/database"
 )
 
 type state struct {
+	db  *database.Queries
 	cfg *config.Config
 }
 
@@ -17,13 +21,21 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	dbURL := cfg.DBURL
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	dbQueries := database.New(db)
 	s := state{
+		db:  dbQueries,
 		cfg: &cfg,
 	}
 	cmds := commands{
 		handler: map[string]func(*state, command) error{},
 	}
 	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
 	if len(os.Args) < 2 {
 		log.Fatal("no command provided")
 	}
@@ -31,6 +43,8 @@ func main() {
 		name: os.Args[1],
 		args: os.Args[2:],
 	}
+
+	// Run the actual command
 	err = cmds.run(&s, cmd)
 	if err != nil {
 		log.Fatal(err)
