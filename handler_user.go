@@ -52,3 +52,18 @@ func handlerReset(s *state, _ command) error {
 	fmt.Println("successfully reset users table")
 	return nil
 }
+
+func handlerUsers(s *state, _ command) error {
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, user := range users {
+		name := user.Name
+		if s.cfg.CurrentUserName == name {
+			name += " (current)"
+		}
+		fmt.Printf("* %s\n", name)
+	}
+	return nil
+}
