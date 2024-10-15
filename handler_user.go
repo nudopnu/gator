@@ -67,3 +67,13 @@ func handlerUsers(s *state, _ command) error {
 	}
 	return nil
 }
+
+func middlewareLoggedIn(handler func(*state, command, database.User) error) func(*state, command) error {
+	return func(s *state, c command) error {
+		currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+		if err != nil {
+			return fmt.Errorf("invalid current user %s: %w", s.cfg.CurrentUserName, err)
+		}
+		return handler(s, c, currentUser)
+	}
+}
