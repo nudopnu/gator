@@ -43,3 +43,12 @@ func handlerAddFeed(s *state, cmd command) error {
 	fmt.Printf("Successfully added feed:\n%+v\n", feed)
 	return nil
 }
+
+func handlerFeeds(s *state, cmd command) error {
+	feeds, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("error fetching feeds: %w", err)
+	}
+	fmt.Printf("%+v\n", feeds)
+	return nil
+}
