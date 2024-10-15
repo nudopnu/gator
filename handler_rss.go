@@ -98,3 +98,22 @@ func handlerFollowing(s *state, _ command, currentUser database.User) error {
 	fmt.Printf("%+v\n", follows)
 	return nil
 }
+
+func handlerUnfollow(s *state, cmd command, currentUser database.User) error {
+	if len(cmd.args) < 1 {
+		return errors.New("no url to unfollow provided")
+	}
+	url := cmd.args[0]
+	feed, err := s.db.GetFeedByUrl(context.Background(), url)
+	if err != nil {
+		return fmt.Errorf("there is no feed matching url '%s' %w", url, err)
+	}
+	err = s.db.DeleteFeedFollow(context.Background(), database.DeleteFeedFollowParams{
+		UserID: currentUser.ID,
+		FeedID: feed.ID,
+	})
+	if err != nil {
+		return fmt.Errorf("error removing feedfollow: %w", err)
+	}
+	return nil
+}
