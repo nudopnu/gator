@@ -64,7 +64,7 @@ func handlerFeeds(s *state, cmd command) error {
 		return fmt.Errorf("error fetching feeds: %w", err)
 	}
 	for _, feed := range feeds {
-		fmt.Printf("'%s' added by %s, last fetched at %v\n", feed.Name, feed.UserName, feed.LastFetchedAt.Time)
+		fmt.Printf("%s: (%s) added by %s, last fetched at %v\n", feed.Name, feed.Url, feed.UserName, feed.LastFetchedAt.Time)
 	}
 	return nil
 }
