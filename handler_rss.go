@@ -98,7 +98,9 @@ func handlerFollowing(s *state, _ command, currentUser database.User) error {
 	if err != nil {
 		return fmt.Errorf("error getting follows: %w", err)
 	}
-	fmt.Printf("%+v\n", follows)
+	for _, follow := range follows {
+		fmt.Printf("* %s\n", follow.FeedName)
+	}
 	return nil
 }
 
