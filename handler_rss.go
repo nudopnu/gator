@@ -8,21 +8,22 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nudopnu/gator/internal/database"
-	"github.com/nudopnu/gator/internal/rss"
 )
 
 func handlerAgg(s *state, cmd command) error {
-	// if len(cmd.args) < 1 {
-	// 	return errors.New("no url provided")
-	// }
-	// feedURL := cmd.args[0]
-	feedURL := "https://www.wagslane.dev/index.xml"
-	feed, err := rss.FetchFeed(context.Background(), feedURL)
-	if err != nil {
-		return fmt.Errorf("error fetching feed: %w", err)
+	if len(cmd.args) < 1 {
+		return errors.New("no duration provided")
 	}
-	fmt.Printf("%+v\n", feed)
-	return nil
+	duration := cmd.args[0]
+	milliseconds, err := time.ParseDuration(duration)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Collecting feeds every %s\n", duration)
+	ticker := time.NewTicker(milliseconds)
+	for ; ; <-ticker.C {
+		scrapeFeeds(s)
+	}
 }
 
 func handlerAddFeed(s *state, cmd command, currentUser database.User) error {

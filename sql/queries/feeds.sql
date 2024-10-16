@@ -17,3 +17,10 @@ SELECT F.*, U.name AS user_name FROM (
 
 -- name: GetFeedByUrl :one
 SELECT * FROM feeds WHERE feeds.url = $1;
+
+-- name: MarkFeedFetched :exec
+UPDATE feeds SET updated_at=CURRENT_TIMESTAMP, last_fetched_at=CURRENT_TIMESTAMP WHERE id=$1;
+
+-- name: GetNextFeedToFetch :one
+SELECT * FROM feeds 
+ORDER BY last_fetched_at DESC NULLS FIRST;
