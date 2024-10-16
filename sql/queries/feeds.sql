@@ -23,4 +23,4 @@ UPDATE feeds SET updated_at=CURRENT_TIMESTAMP, last_fetched_at=CURRENT_TIMESTAMP
 
 -- name: GetNextFeedToFetch :one
 SELECT * FROM feeds 
-ORDER BY last_fetched_at DESC NULLS FIRST;
+ORDER BY last_fetched_at ASC NULLS FIRST;
